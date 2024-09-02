@@ -3,12 +3,12 @@ import xarray, warnings, torch
 import xarray.core.coordinates
 from omegaconf import DictConfig, OmegaConf
 from hydra.core.global_hydra import GlobalHydra
-from hydra.initialize import initialize, initialize_config_dir
+from hydra.initialize import initialize
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any, Dict, List, Tuple, Type, Optional, Union, Hashable
 from dataclasses import dataclass
-from fmod.base.util.logging import lgm, exception_handled, log_timing
+from sres.base.util.logging import lgm, exception_handled, log_timing
 from datetime import date, timedelta, datetime
 from xarray.core.coordinates import DataArrayCoordinates, DatasetCoordinates
 import hydra, traceback, os
@@ -21,6 +21,9 @@ DataCoordinates = Union[DataArrayCoordinates,DatasetCoordinates]
 def cfg() -> DictConfig:
     return ConfigContext.cfg
 
+def config() -> Dict:
+    return ConfigContext.configuration
+
 def cid() -> str:
     return '-'.join([ cfg().model.name, cfg().task.dataset, cfg().task.name ])
 
@@ -29,23 +32,23 @@ def cfgdir() -> str:
     print( f'cdir = {cdir}')
     return str(cdir)
 
-class ConfigContext(hydra.initialize_config_dir):
+class ConfigContext(initialize):
     cfg: Optional[DictConfig] = None
     defaults: Dict = {}
+    configuration: Dict = {}
 
     def __init__(self, name: str, **kwargs ):
         assert self.cfg is None, "Only one ConfigContext instance is allowed at a time"
         self.name = name
-        self.configuration = dict(**self.defaults, **kwargs)
+        ConfigContext.configuration = dict(**self.defaults, **kwargs)
         self.model: str = self.get_config('model')
         self.pipeline: str = self.get_config('pipeline')
         self.platform: str = self.get_config('platform')
         self.task: str = self.get_config('task')
         self.dataset: str = self.get_config('dataset')
-        self.config_path: str = self.get_config('config_path', 
-                                                "/panfs/ccds02/home/gtamkin/dev/super-resolution-sst/tm/FMod/config")
-        self.cid = '-'.join( [self.model, self.dataset, self.task] )
-        super(ConfigContext, self).__init__(version_base=None, config_dir=self.config_path)
+        self.config_path: str = self.get_config('config_path', "../../../config")
+        self.cid = '-'.join( [self.name, self.model, self.dataset, self.task] )
+        super(ConfigContext, self).__init__(version_base=None, config_path=self.config_path)
 
     def get_config(self,name: str, default: Any = None ):
         return self.configuration.get( name, self.defaults.get(name,default) )
@@ -80,18 +83,6 @@ class ConfigContext(hydra.initialize_config_dir):
         cfg.task.training_version = self.cid
 
     def load(self) -> DictConfig:
-        assert self.cfg is None, "Another Config context has already been activated"
-        if not GlobalHydra().is_initialized():
-            hydra.initialize(version_base=None, config_path=self.config_path)
-        print( f"load {self.name}: config = {self.configuration}")
-
-        # abs_config_dir=os.path.abspath(self.config_path)
-        # hydra.initialize_config_dir(version_base=None, config_dir=abs_config_dir)
-
-        cfg = hydra.compose(config_name=self.name, overrides=[f"{ov[0]}={ov[1]}" for ov in self.configuration.items()])
-        return cfg
-    
-    def _load(self) -> DictConfig:
         assert self.cfg is None, "Another Config context has already been activateed"
         if not GlobalHydra().is_initialized():
             hydra.initialize(version_base=None, config_path=self.config_path)
@@ -101,18 +92,17 @@ class ConfigContext(hydra.initialize_config_dir):
     def __enter__(self, *args: Any, **kwargs: Any):
        super(ConfigContext, self).__enter__(*args, **kwargs)
        self.activate()
-       print( 'Entering cfg-context: ', self.name )
+       print( f'Entering cfg-context {self.name}, cfg: type={type(cfg())} ' )
        return self
 
     def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any):
        super(ConfigContext, self).__exit__(exc_type, exc_val, exc_tb)
-       print( 'Exiting cfg-context: ', self.name )
        self.deactivate()
-       if exc_type is not None:
+       if exc_type is None:
+           print(f'\nExiting cfg-context {self.name} cleanly' )
+       else:
+           print(f'\nExiting cfg-context {self.name} with exception:')
            traceback.print_exception( exc_type, value=exc_val, tb=exc_tb)
-
-    def __del__ (self):
-        self.deactivate()
 
 
 def cfg2meta(csection: str, meta: object, on_missing: str = "ignore"):

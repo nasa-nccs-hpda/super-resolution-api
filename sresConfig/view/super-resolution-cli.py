@@ -14,11 +14,11 @@ Original Author: Glenn Tamkin, CISTO, Code 602
 # --------------------------------------------------------------------------------
 import sys
 
-import veto.config
-sys.modules["fmod.base.util.config"] = veto.config
+# import veto.config
+# sys.modules["sres.base.util.config"] = veto.config
 
 import veto.gpu
-sys.modules["fmod.base.gpu"] = veto.gpu
+sys.modules["sres.base.gpu"] = veto.gpu
 
 # import _fmod.base.util.config
 # sys.modules["fmod.base.util.config"] = _fmod.base.util.config
@@ -29,23 +29,11 @@ from pathlib import Path
 #sys.path.insert(0,'/explore/nobackup/people/gtamkin/dev/super-resolution-sst/tm/FMod')
 
 from sresConfig.model.parms import parms
-from fmod.controller.workflow import WorkflowController
+from sresConfig.controller.actions import ActionController
 
 from omegaconf import DictConfig
 from hydra.core.global_hydra import GlobalHydra
 import hydra
-# from _fmod.base.util.config import ConfigContext
-
-
-# foo = ConfigContext()
-# funcType = type(ConfigContext.load)
-
-# def myload(self) -> DictConfig:
-#         assert self.cfg is None, "Another Config context has already been activateed"
-#         if not GlobalHydra().is_initialized():
-#             hydra.initialize(version_base=None, config_path=self.config_path)
-#         print( f"load {self.name}: config = {self.configuration}")
-#         return hydra.compose(config_name=self.name, overrides=[f"{ov[0]}={ov[1]}" for ov in self.configuration.items()])
 
 
 def main():
@@ -68,18 +56,28 @@ def main():
     try:
         cname = context[parms.SRES_PIPELINE] #"sres"
         model =  context[parms.SRES_MODEL] #'dbpn'  # [ 'dbpn', 'srdn', 'unet', 'vdsr', 'mscnn', 'edsr' ]
+        models: List[str] = [ str(context[parms.SRES_MODEL]) ]
         ccustom: Dict[str,Any] = {}
         yscale = "log"
 
         configuration = dict(
             platform = context[parms.SRES_PLATFORM], #"explore",
             task = context[parms.SRES_TASK], #"cape_basin",
-            dataset = context[parms.SRES_DATASET] # "LLC4320"
+            dataset = context[parms.SRES_DATASET], # "LLC4320"
         )
 
-        controller = WorkflowController( cname, configuration )
-        controller.init_plotting( cname, model, **ccustom )
-
+        if str(context[parms.SRES_ACTION]).endswith('train'):
+            refresh =  False
+            controller = ActionController( cname, configuration, refresh_state=refresh, interp_loss=True )
+            controller.train( models, **ccustom )
+        elif str(context[parms.SRES_ACTION]).endswith('infer'):
+            # refresh =  False
+            controller = ActionController( cname, configuration, interp_loss=True )
+            model = models[0]
+            controller.infer( model, [ 0, 10 ], **ccustom )
+        else:
+            print("Invalid action = " + str(context[parms.SRES_ACTION]))
+   
     except BaseException as err:
             print('\nWorkflow processing failed - Error details: ', err)
 

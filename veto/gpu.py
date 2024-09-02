@@ -1,5 +1,5 @@
-from fmod.base.util.config import cfg
-from fmod.base.util.logging import lgm, exception_handled, log_timing
+from sres.base.util.config import cfg
+from sres.base.util.logging import lgm, exception_handled, log_timing
 from torch import cuda
 import torch, os, time
 
