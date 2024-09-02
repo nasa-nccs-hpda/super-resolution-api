@@ -7,6 +7,38 @@ from datetime import datetime
 from pathlib import Path
 import csv
 
+from enum import Enum
+from pydantic import BaseModel,ValidationError
+
+class Action(Enum):
+    TRAIN = "train"
+    INFER = "infer"
+
+class Dataset(Enum):
+    LLC = "LLC4320"
+    MERRA2 = "merra2"
+    SWOT = "swot"
+
+class Model(Enum):
+    DBPN = "dbpn"
+    EDSR = "edsr"
+    ESRT = "esrt"
+    LAPSRN = "lapsrn"
+    RCAN = "rcan"
+
+class Pipeline(Enum):
+    SRES = "sres"
+
+class Platform(Enum):
+    DESKTOP = "desktop"
+    EXPLORE = "explore"
+
+class SRESConfiguration(BaseModel):
+    action: Action
+    model: Model
+    dataset: Dataset
+    pipeline: Pipeline
+    platform: Platform
 
 # -----------------------------------------------------------------------------
 # class context
@@ -55,21 +87,12 @@ class parms(object):
         # Initialize serializable context for orchestration
         try:
             self.context_dict[parms.SRES_VALIDATE_FLAG] = str(args.validatebool)
-            if eval(self.context_dict[parms.SRES_VALIDATE_FLAG]):
-                    print("validation ON")
-            else: 
-                    print("validation OFF")
             config_location = str(args.sres_config_dir)
             if (os.path.isdir(config_location)):
                 self.context_dict[parms.DIR_CONFIG] = config_location
             else:
                 raise FileNotFoundError("Config directory not found: {}".format(config_location))
                 
-            #     self._create_logfile(self.context_dict[parms.REGRESSION_MODEL],
-            #                          self.context_dict[parms.DIR_OUTPUT])
-            # if (int(self.context_dict[parms.DEBUG_LEVEL]) >= int(self.DEBUG_TRACE_VALUE)):
-            #     print(sys.path)
-
             self.context_dict[parms.SRES_BATCH] = str(args.sres_batch)
             self.context_dict[parms.SRES_DEVICE] = str(args.sres_device)
             self.context_dict[parms.SRES_VAR] = str(args.sres_var)            
@@ -79,6 +102,26 @@ class parms(object):
             self.context_dict[parms.SRES_PIPELINE] = str(args.sres_pipeline)            
             self.context_dict[parms.SRES_ACTION] = str(args.sres_action)            
             self.context_dict[parms.SRES_PLATFORM] = str(args.sres_platform)            
+
+            if eval(self.context_dict[parms.SRES_VALIDATE_FLAG]):
+                try:
+                    # class SRESConfiguration(BaseModel):
+                    #     action: Action
+                    #     model: Model
+                    #     dataset: Dataset
+                    #     pipeline: Pipeline
+                    #     platform: Platform
+                    srescfg = SRESConfiguration( 
+                        action=self.context_dict[parms.SRES_ACTION],
+                        model=self.context_dict[parms.SRES_MODEL],
+                        dataset=self.context_dict[parms.SRES_DATASET],
+                        pipeline=self.context_dict[parms.SRES_PIPELINE],
+                        platform=self.context_dict[parms.SRES_PLATFORM]
+                    )
+                    print(srescfg)
+                except ValidationError as e:
+                        print(e)
+                        sys.exit(1)
 
         except BaseException as err:
             print('Check arguments: ', err)
