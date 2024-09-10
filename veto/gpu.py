@@ -10,17 +10,14 @@ def set_device() -> torch.device:
         print('<device>:<index>:<device.index> ' + str(device) + ':' + str(gpu_index) + ':' + str(device.index))
         return device
 
-def _set_device() -> torch.device:
-	gpu_index = cfg().pipeline.gpu
-	device = torch.device(f'cuda:{gpu_index}' if cuda.is_available() else 'cpu')
-	if torch.cuda.is_available():
-		cuda.set_device(device.index)
-		if cfg().pipeline.memory_debug:
-			cuda.memory._record_memory_history()
-	else:
-		assert gpu_index == 0, "Can't run on multiple GPUs: No GPUs available"
-	return device
-
+def override_device(_device) -> torch.device:
+		if (_device == 'None'):
+			return set_device()
+		else:
+			print('torch.cuda.is_available(?): ' + str(torch.cuda.is_available()))
+			device = torch.device(f'{_device}')
+			print('<device>:<index>:<device.index> ' + str(device))	
+			return device
 
 def get_device() -> torch.device:
 	gpu_index = cfg().pipeline.gpu

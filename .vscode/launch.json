@@ -8,7 +8,7 @@
     },
     "configurations": [
         {
-            "name": "Python Debugger: super-resolution-climate: rcan-10-20-64 - infer()",
+            "name": "CLI: dataset: swot, model: rcan-10-20-64, device: cpu - infer()",
             "type": "debugpy",
             "request": "launch",
             "program": "${file}",
@@ -30,7 +30,37 @@
                 "SST-tiles-48",
                 "-var",
                 "sst",
-                "--validate",
+                "--device",
+                "cpu",
+                // "--validate",
+            ]
+        },
+        {
+            "name": "CLI: dataset: swot, model: rcan-10-20-64, device: None - infer()",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args": [
+                "-config_dir",
+                "/explore/nobackup/people/gtamkin/dev/super-resolution-climate/config",
+                "-action",
+                "infer",
+               "-dataset",
+                "swot",
+                "-model",
+                "rcan-10-20-64",
+                "-pipeline",
+                "sres",
+                "-platform",
+                "explore_gt",
+                "-task",
+                "SST-tiles-48",
+                "-var",
+                "sst",
+                // "--device",
+                // "cpu",
+                // "--validate",
             ]
         },
         {
@@ -53,10 +83,12 @@
                 "-platform",
                 "explore_gt",
                 "-task",
-                "SSS_SST-tiles-48",
+                "SST-tiles-48",
                 "-var",
                 "sst",
-                "--validate",
+                "--device",
+                "cpu",
+                // "--validate",
             ]
         },
         {

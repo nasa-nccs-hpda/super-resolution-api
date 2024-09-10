@@ -32,7 +32,7 @@ class ActionController(object):
 	
 	def infer(self, model: str, time_index_bounds: List[int], **ccustom):
 		controller = WorkflowController( self.cname, self.configuration, interp_loss=self.interp_loss )
-		ccustom: Dict[str,Any] = {}
+		# ccustom: Dict[str,Any] = {}
 		data_structure = ResultStructure.Tiles
 		controller.initialize( self.cname, model, **ccustom )
 
