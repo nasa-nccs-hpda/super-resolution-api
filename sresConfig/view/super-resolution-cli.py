@@ -16,6 +16,12 @@ import sys
 
 # import veto.config
 # sys.modules["sres.base.util.config"] = veto.config
+sys.path.insert(0,'.')
+sys.path.insert(1,'./veto')
+sys.path.insert(2,'./super-resolution-climate')
+sys.path.insert(3,'../../veto')
+sys.path.insert(4,'../../super-resolution-climate')
+print('\n', sys.path)
 
 import veto.gpu
 import veto.dual_trainer
