@@ -1,9 +1,0 @@
-root:      "/explore/nobackup/projects/ilab/data/super-resolution-climate"
-results:   "${.root}/results"
-cache:     "${.root}/cache"
-processed: '${.root}/processed'
-
-
-
-
-
