@@ -1,0 +1,9 @@
+root:      "/explore/nobackup/people/gtamkin/dev/super-resolution-api/out/deploy"
+results:   "${.root}/results"
+cache:     "${.root}/cache"
+processed: '${.root}/processed'
+
+
+
+
+

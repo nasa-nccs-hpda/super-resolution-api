@@ -11,47 +11,47 @@ from sres.view.plot.tiles  import ResultTilePlot
 from sres.view.plot.images import ResultImagePlot
 from sres.view.plot.training import TrainingPlot
 from sres.view.plot.base import Plot
-from sres.controller.workflow import WorkflowController
+import argparse
 
-class ActionController(object):
+class WorkflowController(object):
 
 	def __init__(self, cname: str, configuration: Dict[str,Any], **kwargs):
 		self.cname = cname
+		self.seed = kwargs.get('seed', int( time.time()/60 ) )
 		self.refresh_state = kwargs.get('refresh_state', False )
 		self.interp_loss = kwargs.get('interp_loss', False)
 		self.epochs = kwargs.get('epochs', 1)
-		self.structure = kwargs.get('structure', "image")
-		if (self.structure == "image"):
-			self.data_structure= ResultStructure.Image
-		else:
-			self.data_structure = ResultStructure.Tiles
-		self.configuration = configuration
+		self.structure = kwargs.get('structure', ResultStructure.Image)
+
 		self.config: ConfigContext = None
-		ConfigContext.set_defaults( **configuration )
+		self.trainer: ModelTrainer = None
+		self.plot: Plot = None
+		self.model = None
+		ConfigContext.set_defaults(**configuration)
 
-	def train(self, models: List[str], **ccustom):
-		self.controller = WorkflowController( self.cname, self.configuration, 
-									   refresh_state=self.refresh_state, interp_loss=self.interp_loss,
-									   epochs=self.epochs)
-		self.controller.train( models, **ccustom )
-	
-	def infer(self, model: str, time_index_bounds: List[int], **ccustom):
-		controller = WorkflowController( self.cname, self.configuration, structure=self.data_structure,
-								  interp_loss=self.interp_loss )
-		data_structure = self.data_structure
-		controller.initialize( self.cname, model, **ccustom )
+	def train(self, models: List[str], **kwargs):
+		# ccustom: Dict[str,Any] = {}
+		for model in models:
+			with ConfigContext(self.cname, model=model, **kwargs) as cc:
+				try:
+					self.config = cc
+					# args: argparse.Namespace = self.get_args()
+					self.trainer = ModelTrainer(cc)
+					self.trainer.train( self.epochs, self.refresh_state, 
+						seed=self.seed, interp_loss=self.interp_loss )
+				except Exception as e:
+					lgm().exception( "Exception while training model: %s" % str(e) )
+					save_memory_snapshot()
 
-		for timestep in list(range(*time_index_bounds)):
-			inference_data, eval_losses = controller.inference( timestep, data_structure, save=True )
+				lgm().log(f"Completed training model: {model}")
 
-			print( f"Inference results for {self.configuration['dataset']}:{self.configuration['task']} timestep={timestep}, format={data_structure.value}:")
-			for vname in inference_data.keys():
-				print( f" * Variable {vname}:")
-				var_data: Dict[str, xa.DataArray] = inference_data[vname]
-				for dtype, darray in var_data.items():
-					print( f"   -> {dtype+':':<8} array{darray.dims}{darray.shape}")
+	def get_args(self) -> argparse.Namespace:
+		argparser = argparse.ArgumentParser(description=f'Execute workflow {self.cname}')
+		argparser.add_argument('-r', '--refresh', action='store_true', help="Refresh workflow by deleting existing checkpoints and learning stats")
+		argparser.add_argument('-ne', '--nepochs', nargs='?', default=cfg().task.nepochs, type=int, help="Number of epochs to run training")
+		return argparser.parse_args()
 
-	def _inference(self, timestep: int, data_structure: ResultStructure,  **kwargs)-> Tuple[Dict[str,Dict[str,xa.DataArray]], Dict[str,Dict[str,float]] ]:
+	def inference(self, timestep: int, data_structure: ResultStructure,  **kwargs)-> Tuple[Dict[str,Dict[str,xa.DataArray]], Dict[str,Dict[str,float]] ]:
 			varnames = self.trainer.target_variables
 			if   data_structure == ResultStructure.Image:
 				image_results, eval_results = self.trainer.process_image(TSet.Validation, timestep, interp_loss=True, update_model=True, **kwargs)

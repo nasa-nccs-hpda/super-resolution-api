@@ -14,27 +14,25 @@ Original Author: Glenn Tamkin, CISTO, Code 602
 # --------------------------------------------------------------------------------
 import sys
 
-# import veto.config
+import veto.config
 # sys.modules["sres.base.util.config"] = veto.config
-sys.path.insert(0,'.')
-sys.path.insert(1,'./veto')
-sys.path.insert(2,'./super-resolution-climate')
+
+# sys.path.insert(0,'.')
+# sys.path.insert(1,'./veto')
+# sys.path.insert(2,'./super-resolution-climate')
 sys.path.insert(3,'../../veto')
 sys.path.insert(4,'../../super-resolution-climate')
 print('\n', sys.path)
 
 import veto.gpu
 import veto.dual_trainer
+import veto.workflow
 sys.modules["sres.base.gpu"] = veto.gpu
-sys.modules["sres.controller.dual_trainer"] = veto.dual_trainer
-
-# import _fmod.base.util.config
-# sys.modules["fmod.base.util.config"] = _fmod.base.util.config
+sys.modules["sres.controller.workflow"] = veto.workflow
 
 from typing import Any, Dict, List, Tuple, Type, Optional, Union
 import time  # tracking time
 from pathlib import Path
-#sys.path.insert(0,'/explore/nobackup/people/gtamkin/dev/super-resolution-sst/tm/FMod')
 
 from sresConfig.model.parms import parms
 from sresConfig.controller.actions import ActionController
@@ -57,37 +55,34 @@ def main():
     # Initialize context
     contextClazz = parms(1)
     context = contextClazz.getDict()
-
-    # hydra.initialize(version_base=None, config_path=context[parms.DIR_CONFIG])
-    # fmod.base.util.config.bark = funcType(new_bark, foo, fmod.base.util.config)
     
     try:
+        # Derive configuration names from CLI
+        _task = f"{context[parms.SRES_VAR]}-tiles-{context[parms.SRES_TILESIZE]}"
+        _dataset = f"swot_{context[parms.SRES_REGION]}"
+
         cname = context[parms.SRES_PIPELINE] #"sres"
-        model =  context[parms.SRES_MODEL] #'dbpn'  # [ 'dbpn', 'srdn', 'unet', 'vdsr', 'mscnn', 'edsr' ]
+        model =  context[parms.SRES_MODEL] #'swot' 
         models: List[str] = [ str(context[parms.SRES_MODEL]) ]
         ccustom: Dict[str,Any] = {}
-        if (context[parms.SRES_DEVICE] != None):
-            cli_device_override: Dict[str,Any] = { 'sres_device': context[parms.SRES_DEVICE] }
-        else:
-            cli_device_override: Dict[str,Any] = {}
-
-        yscale = "log"
-
         configuration = dict(
-            platform = context[parms.SRES_PLATFORM], #"explore",
-            task = context[parms.SRES_TASK], #"cape_basin",
-            dataset = context[parms.SRES_DATASET], # "LLC4320"
-        )
+            task = _task,
+            dataset = _dataset,
+            pipeline = cname,
+            platform = context[parms.SRES_PLATFORM],
+         )
 
+        # Process specified action
         if str(context[parms.SRES_ACTION]).endswith('train'):
             refresh =  False
-            controller = ActionController( cname, configuration, refresh_state=refresh, interp_loss=True )
+            controller = ActionController( cname, configuration, epochs=context[parms.SRES_EPOCHS], 
+                                          refresh_state=refresh, interp_loss=True )
             controller.train( models, **ccustom )
         elif str(context[parms.SRES_ACTION]).endswith('infer'):
-            # refresh =  False
-            controller = ActionController( cname, configuration, interp_loss=True )
+            controller = ActionController( cname, configuration, structure=context[parms.SRES_STRUCTURE], 
+                                          interp_loss=True )
             model = models[0]
-            controller.infer( model, [ 0, 10 ], **cli_device_override )
+            controller.infer( model, [ 0, int(context[parms.SRES_TIMESTEPS]) ], **ccustom )
         else:
             print("Invalid action = " + str(context[parms.SRES_ACTION]))
    

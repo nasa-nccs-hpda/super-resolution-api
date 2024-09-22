@@ -33,12 +33,20 @@ class Platform(Enum):
     DESKTOP = "desktop"
     EXPLORE = "explore"
 
+class Region(Enum):
+    ROI2020E = "20-20e"
+    ROI2060N = "20-60n"    
+    ROI6020S = "60-20s"    
+    ROISINDIAN = "south_indian"
+    ROISPACIFIC = "south_pacific"
+
 class SRESConfiguration(BaseModel):
     action: Action
     model: Model
     dataset: Dataset
     pipeline: Pipeline
     platform: Platform
+    region: Region
 
 # -----------------------------------------------------------------------------
 # class context
@@ -60,8 +68,13 @@ class parms(object):
     SRES_TASK = 'sres_task'
     SRES_VAR = 'sres_var'
     SRES_ACTION = 'sres_action'
+    SRES_REGION = 'sres_region'
+    SRES_EPOCHS = 'sres_epochs'
+    SRES_STRUCTURE = 'sres_structure'
+    SRES_TIMESTEPS = 'sres_timesteps'
+    SRES_TILESIZE = 'sres_tilesize'
     SRES_VALIDATE_FLAG = 'sres_validate_flag'
-    DIR_CONFIG = 'sres_config_dir'
+    SRES_CONFIG_PATH = 'sres_config_path'
 
     # Global instance variables
     context_dict = {}
@@ -87,21 +100,27 @@ class parms(object):
         # Initialize serializable context for orchestration
         try:
             self.context_dict[parms.SRES_VALIDATE_FLAG] = str(args.validatebool)
-            config_location = str(args.sres_config_dir)
-            if (os.path.isdir(config_location)):
-                self.context_dict[parms.DIR_CONFIG] = config_location
-            else:
-                raise FileNotFoundError("Config directory not found: {}".format(config_location))
+            # config_location = str(args.sres_config_path)
+            # if (os.path.isdir(config_location)):
+            #     self.context_dict[parms.SRES_CONFIG_PATH] = config_location
+            # else:
+            #     raise FileNotFoundError("Config directory not found: {}".format(config_location))
                 
             self.context_dict[parms.SRES_BATCH] = str(args.sres_batch)
             self.context_dict[parms.SRES_DEVICE] = str(args.sres_device)
             self.context_dict[parms.SRES_VAR] = str(args.sres_var)            
+            self.context_dict[parms.SRES_CONFIG_PATH] = str(args.sres_config_path)            
             self.context_dict[parms.SRES_TASK] = str(args.sres_task)            
             self.context_dict[parms.SRES_DATASET] = str(args.sres_dataset)            
             self.context_dict[parms.SRES_MODEL] = str(args.sres_model)            
             self.context_dict[parms.SRES_PIPELINE] = str(args.sres_pipeline)            
             self.context_dict[parms.SRES_ACTION] = str(args.sres_action)            
             self.context_dict[parms.SRES_PLATFORM] = str(args.sres_platform)            
+            self.context_dict[parms.SRES_REGION] = str(args.sres_region)            
+            self.context_dict[parms.SRES_EPOCHS] = int(args.sres_epochs)            
+            self.context_dict[parms.SRES_STRUCTURE] = str(args.sres_structure)            
+            self.context_dict[parms.SRES_TIMESTEPS] = int(args.sres_timesteps)            
+            self.context_dict[parms.SRES_TILESIZE] = int(args.sres_tilesize)            
 
             if eval(self.context_dict[parms.SRES_VALIDATE_FLAG]):
                 try:
@@ -116,7 +135,8 @@ class parms(object):
                         model=self.context_dict[parms.SRES_MODEL],
                         dataset=self.context_dict[parms.SRES_DATASET],
                         pipeline=self.context_dict[parms.SRES_PIPELINE],
-                        platform=self.context_dict[parms.SRES_PLATFORM]
+                        platform=self.context_dict[parms.SRES_PLATFORM],
+                        region=self.context_dict[parms.SRES_REGION]
                     )
                     print(srescfg)
                 except ValidationError as e:
@@ -127,19 +147,8 @@ class parms(object):
             print('Check arguments: ', err)
             sys.exit(1)
 
-        # Initialize instance variables
-#        self.debug_level = int(self.context_dict[parms.DEBUG_LEVEL])
-
-        # Echo input parameter values
-    # SRES_VAR = 'sres_var'
-    # SRES_TASK = 'sres_task'
-    # SRES_DATASET = 'sres_dataset'
-    # SRES_PIPELINE = 'sres_pipeline'
-    # SRES_PLATFORM = 'sres_platform'
-
         self.trace(f'Initializing Super Resolution invocation with the following parameters:')
-        if (self.context_dict[parms.SRES_BATCH] != None): self.trace(f'Batch:    {self.context_dict[parms.SRES_BATCH]}')
-        if (self.context_dict[parms.SRES_DEVICE] != None): self.trace(f'Device:    {self.context_dict[parms.SRES_DEVICE]}')
+        self.trace(f'Config path:    {self.context_dict[parms.SRES_CONFIG_PATH]}')
         self.trace(f'Action:    {self.context_dict[parms.SRES_ACTION]}')
         self.trace(f'Dataset:    {self.context_dict[parms.SRES_DATASET]}')
         self.trace(f'Model:    {self.context_dict[parms.SRES_MODEL]}')
@@ -147,8 +156,15 @@ class parms(object):
         self.trace(f'Platform:    {self.context_dict[parms.SRES_PLATFORM]}')
         self.trace(f'Task:    {self.context_dict[parms.SRES_TASK]}')
         self.trace(f'Var:    {self.context_dict[parms.SRES_VAR]}')
+        self.trace(f'Region:    {self.context_dict[parms.SRES_REGION]}')
+        if str(self.context_dict[parms.SRES_ACTION]).endswith('train'): 
+            self.trace(f'Training Epochs:    {self.context_dict[parms.SRES_EPOCHS]}')
+        else:
+            self.trace(f'Inference Data Structure:    {self.context_dict[parms.SRES_STRUCTURE]}')
+            self.trace(f'Inference Tilesize:    {self.context_dict[parms.SRES_TILESIZE]}')
+            self.trace(f'Inference Timesteps:    {self.context_dict[parms.SRES_TIMESTEPS]}')
         self.trace(f'Validation:    {self.context_dict[parms.SRES_VALIDATE_FLAG]}')
-
+        
         return
 
     # -------------------------------------------------------------------------
@@ -162,13 +178,7 @@ class parms(object):
         """
         parser = argparse.ArgumentParser()
 
-        # Super Resolution parameters
-        # var = "sst"
-        # task = "cape_basin",
-        # dataset = "LLC4320",
-        # pipeline = "sres",
-        # platform = "explore_gt"
-        
+        # Super Resolution parameters        
         parser.add_argument(
             "--batch", "--batch", type=str, required=False, dest='sres_batch',
             default=None, help="Specify batch name for run."
@@ -178,36 +188,61 @@ class parms(object):
             default=None, help="Override default device name for run."
         )
         parser.add_argument(
-            "-config_dir", "--config_dir", type=str, required=True, dest='sres_config_dir',
-            default=None, help="Specify directory path containing CONFIG files."
+            "-config_path", "--config_path", type=str, required=False, dest='sres_config_path',
+            default="../../../config", help="Specify directory path containing CONFIG files."
         )
         parser.add_argument(
-            "-dataset", "--dataset", type=str, required=True, dest='sres_dataset',
-            default="LLC4320", help="Specify super-resolution dataset to process."
+            "-dataset", "--dataset", type=str, required=False, dest='sres_dataset',
+            default="swot", help="Specify super-resolution dataset to process."
         )
         parser.add_argument(
-            "-model", "--model", type=str, required=True, dest='sres_model',
-            default="rcan", help="Specify super-resolution model to process."
+            "-model", "--model", type=str, required=False, dest='sres_model',
+            default="rcan-10-20-64", help="Specify super-resolution model to process."
         )
         parser.add_argument(
-            "-pipeline", "--pipeline", type=str, required=True, dest='sres_pipeline',
+            "-pipeline", "--pipeline", type=str, required=False, dest='sres_pipeline',
             default="sres", help="Specify super-resolution pipeline to process."
         )
         parser.add_argument(
-            "-platform", "--platform", type=str, required=True, dest='sres_platform',
-            default="explore_gt", help="Specify super-resolution platform to process."
+            "-platform", "--platform", type=str, required=False, dest='sres_platform',
+            default="platform-deploy", help="Specify super-resolution platform to process."
         )
         parser.add_argument(
-            "-task", "--task", type=str, required=True, dest='sres_task',
-            default="cape_basin", help="Specify super-resolution task to process."
+            "-task", "--task", type=str, required=False, dest='sres_task',
+            default="SST-tiles-48", help="Specify super-resolution task to process."
         )
         parser.add_argument(
-            "-var", "--var", type=str, required=True, dest='sres_var',
-            default="sst", help="Specify super-resolution variable to process."
+            "-var", "--var", type=str, required=False, dest='sres_var',
+            default="SST", help="Specify variable to process (default[SST])."
         )
         parser.add_argument(
             "-action", "--action", type=str, required=True, dest='sres_action',
-            help="Specify super-resolution action to process (e.g., train, infer)."
+            help="Specify action to process (e.g., train, infer)."
+        )
+        parser.add_argument(
+            "-region", "--region", type=str, required=False, dest='sres_region',
+            default="20-60n",
+            help="Specify region of interest to process (e.g., 20-60n, south_indian)(default[20-60n])."
+        )
+        parser.add_argument(
+            "-epochs", "--epochs", type=int, required=False, dest='sres_epochs',
+            default=1,
+            help="Specify maximum number of training epochs (default[1])."
+        )
+        parser.add_argument(
+            "-structure", "--structure", type=str, required=False, dest='sres_structure',
+            default="image",
+            help="Specify inference results data structure (e.g., image or tiles)(default[image])."
+        )
+        parser.add_argument(
+            "-tilesize", "--tilesize", type=str, required=False, dest='sres_tilesize',
+            default="48",
+            help="Specify inference tile size (default[48])."
+        )
+        parser.add_argument(
+            "-timesteps", "--timesteps", type=int, required=False, dest='sres_timesteps',
+            default=1,
+            help="Specify maximum number of inference timesteps where range starts at '0' (default[1])."
         )
         parser.add_argument(
             "--debug", "--debug_level", type=int, required=False, dest='debug_level',
