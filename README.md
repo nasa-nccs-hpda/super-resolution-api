@@ -37,10 +37,10 @@ Default values are specified here for a variety of internal parameters related t
 
 | Parameter | Description | Value |
 | --- | --- | --- |
-| action | process to run | infer, train |
-| region | region of interest | south_pacific, south_indian, 20-20e [roi:  {  y0: 6500, ys: 3000 }], 20-60n [roi:  {  y0: 9500, ys: 3000 }], 60-20s |
-| epochs | maximum epochs during training | >0 |
-| structure | inference output format | image, tiles |
+| 'action' | process to run | infer, train |
+| 'region' | region of interest | south_pacific, south_indian, 20-20e [roi:  {  y0: 6500, ys: 3000 }], 20-60n [roi:  {  y0: 9500, ys: 3000 }], 60-20s |
+| 'epochs' | maximum epochs during training | >0 |
+| 'structure' | inference output format | image, tiles |
 
 Notes:
 image & tiles
@@ -48,18 +48,20 @@ dataset_root:
 
 ## Example Runs
 
+This API supports two processing modes: 1) infer() and 2) train().  The infer() process generates one or more images based on the structure parameter. 
+Results for individual tiles, or assembled images for each region, are supported.  The train() process will generate a new model or tune an existing one.
+
+*Note that existing models can be plugged in without running the training process.*
+
 ### Inference
 
-    > python ./sresConfig/view/super-resolution-cli.py -action infer -region 20-60n -structure tiles -timesteps 3 
+    > 'python ./sresConfig/view/super-resolution-cli.py -action infer -region 20-60n -structure tiles -timesteps 3' 
     > python ./sresConfig/view/super-resolution-cli.py -action infer -region 20-60n -structure image
 
 ### Training
 
     > python ./sresConfig/view/super-resolution-cli.py -action train -region 20-60n -epochs 10 
 
-The scripts under *super-resolution-api/scripts/train* are used to train various super-resolution networks with various configurations. The notebook 
-[super-resolution-api/notebooks/plot_training.ipynb](./notebooks/plot_training.ipynb) is used to display a plot of 
-loss vs. epochs for the configured training instance.
 
 ## Inference
 
