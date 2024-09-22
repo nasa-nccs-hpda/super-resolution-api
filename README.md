@@ -30,9 +30,7 @@ Execute the following to install and setup the super-resolution-api framework.
 
 ## Configuration
 
-This project uses [hydra](https://hydra.cc) for workflow configuration.  All configuration files are found in the super-resolution-api/super-resolution-climate/config directory.  
-Default values are specified here for a variety of internal parameters related to model tuning and inference derivations.  
-While these defaults are reasonable for many scenarios, the paths of the inputs and outputs must be correctly updated in the `dataset_root:` and `root:` parameters respectively.
+This project uses [hydra](https://hydra.cc) for workflow configuration.  All configuration files are found in the super-resolution-api/super-resolution-climate/config directory.  Default configuration values are specified here for a variety of internal parameters related to model tuning and inference derivations.  While these defaults are reasonable for many scenarios, the paths of the inputs and outputs must be correctly updated in the `dataset_root:` and `root:` parameters respectively.
 
 Pertinent runtime parameters are described in the table below.
 
@@ -51,7 +49,7 @@ This API supports two processing modes: 1) inference and 2) training.  The infer
 
 The training process [`train`] will generate a new model or tune an existing one according to `region` and the desired number of `epochs`.
 
-*Note that existing models can be plugged in without running the training process.*
+*Note that existing models can be plugged in without running a training process.*
 
 ## Example Runs
 
