@@ -45,11 +45,11 @@ Pertinent runtime parameters are described in the table below.
 
 ### Description
 
-This API supports two processing modes: 1) inference and 2) training.  The inference process [`infer`] generates one or more images based on the `structure` parameter. Results for either individual `tiles` or assembled `image`s for each `region` are supported.  
+This API supports two processing modes: 1) inference and 2) training.  The inference process [`infer`] generates one or more images based on the `structure` parameter. Results for either individual `tiles` or assembled `image`s for the specified `region` are supported.  
 
 The training process [`train`] will generate a new model or tune an existing one according to `region` and the desired number of `epochs`.
 
-*Note that existing models can be plugged in without running a training process.*
+*Note that an inference can be derived from existing models without running a training process.*
 
 ## Example Runs
 
