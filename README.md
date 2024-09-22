@@ -35,12 +35,12 @@ Default values are specified here for a variety of internal parameters related t
 
 ## Parameters
 
-| Parameter | Description | Value
-| --- | --- |
-| action | process to run | infer, train
-| region | region of interest | south_pacific, south_indian, 20-20e [roi:  {  y0: 6500, ys: 3000 }], 20-60n [roi:  {  y0: 9500, ys: 3000 }], 60-20s
-| epochs | maximum epochs during training | >0
-| structure | inference output format | image, tiles
+| Parameter | Description | Value |
+| --- | --- | --- |
+| action | process to run | infer, train |
+| region | region of interest | south_pacific, south_indian, 20-20e [roi:  {  y0: 6500, ys: 3000 }], 20-60n [roi:  {  y0: 9500, ys: 3000 }], 60-20s |
+| epochs | maximum epochs during training | >0 |
+| structure | inference output format | image, tiles |
 
 Notes:
 image & tiles
