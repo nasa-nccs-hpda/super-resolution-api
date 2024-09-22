@@ -38,20 +38,21 @@ Default values are specified here for a variety of internal parameters related t
 | Parameter | Description | Value |
 | --- | --- | --- |
 | `action` | process to run | infer, train |
-| `region` | region of interest | south_pacific [*roi:  {  y0: 3500, ys: 3000, x0: 8797, xs: 7073 }*], south_pacific_1200 [*roi:  {  y0: 3500, ys: 3000, x0: 8797, xs: 7073 }*],south_indian [*roi:  {  y0: 3500, ys: 3000, x0: 2670, xs: 6037 }*], 20-20e [*roi:  {  y0: 6500, ys: 3000 }*], 20-60n [*roi:  {  y0: 9500, ys: 3000 }*], 60-20s |
+| `region` | region of interest | `south_pacific` [*roi:  {  y0: 3500, ys: 3000, x0: 8797, xs: 7073 }*], `south_pacific_1200` [*roi:  { x0: 12480, y0: 4720, xs: 1200, ys: 1200 }*], `south_indian` [*roi:  {  y0: 3500, ys: 3000, x0: 2670, xs: 6037 }*], `20-20e` [*roi:  {  y0: 6500, ys: 3000 }*], `20-60n` [*roi:  {  y0: 9500, ys: 3000 }*], `60-20s` [*roi:  {  y0: 3500, ys: 3000 }*]|
 | `epochs` | maximum epochs during training | >0 |
 | `structure` | inference output format | image, tiles |
 
-Notes:
-image & tiles
-dataset_root: 
 
-## Example Runs
+### Description
 
-This API supports two processing modes: 1) infer() and 2) train().  The infer() process generates one or more images based on the structure parameter. 
-Results for individual tiles, or assembled images for each region, are supported.  The train() process will generate a new model or tune an existing one.
+This API supports two processing modes: 1) inference and 2) training.  The inference process [`infer`] generates one or more images based on the `structure` parameter. 
+Results for either individual `tiles` or assembled `image`s for each `region` are supported.  
+
+The training process [`train`] will generate a new model or tune an existing one according to the desired number of `epochs`.
 
 *Note that existing models can be plugged in without running the training process.*
+
+## Example Runs
 
 ### Inference
 
@@ -67,6 +68,7 @@ Results for individual tiles, or assembled images for each region, are supported
 
 The scripts under *super-resolution-api/scripts/inference* are used to run inference for the trained super-resolution networks. 
 
-## Pre-Requisites
 
-Requires GPU support. 
+Notes:
+image & tiles
+dataset_root: 
