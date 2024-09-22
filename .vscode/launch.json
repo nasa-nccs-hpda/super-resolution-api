@@ -4,7 +4,7 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "terminal.integrated.env.windows": {
-        // "PYTHONPATH": "/explore/nobackup/people/gtamkin/dev/super-resolution-api/sresConfig:${workspaceFolder}"
+        // "PYTHONPATH": "./super-resolution-api/sresConfig:${workspaceFolder}"
     },
     "configurations": [
 
@@ -15,8 +15,6 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "args": [
-                "-config_path",
-                 "../../../../config",
                 "-action",
                 "train",
                 "-region",
@@ -32,8 +30,6 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "args": [
-                // "-config_path",
-                //  "../../../../config",
                 "-action",
                 "train",
                 "-region",
@@ -43,24 +39,7 @@
             ]
         },
         {
-            "name": "TRAIN->, region:20-60n, epochs:0",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "${file}",
-            "console": "integratedTerminal",
-            "args": [
-                "-config_path",
-                 "../../../../config",
-                "-action",
-                "train",
-                "-region",
-                "20-60n",
-                "-epochs",
-                "0",
-            ]
-        },
-        {
-            "name": "INFER->, region:20-60n, structure:image, timesteps:3",
+            "name": "INFER->, region:20-60n, structure:image",
             "type": "debugpy",
             "request": "launch",
             "program": "${file}",
@@ -72,13 +51,10 @@
                 "20-60n",
                 "-structure",
                 "image",
-                "-timesteps",
-                "3",
-                  // "--validate",
             ]
         }
         {
-            "name": "INFER->, region:20-60n, structure:tiles, timesteps:5",
+            "name": "INFER->, region:20-60n, structure:tiles, timesteps:3",
             "type": "debugpy",
             "request": "launch",
             "program": "${file}",
@@ -91,8 +67,7 @@
                 "-structure",
                 "tiles",
                 "-timesteps",
-                "5",
-                  // "--validate",
+                "3",
             ]
         }
 

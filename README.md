@@ -22,11 +22,12 @@ Execute the following to install and setup the super-resolution-api framework.
 
     > git clone https://github.com/nasa-nccs-hpda/super-resolution-api.git
     > cd super-resolution-api/
-    > setup.sh
+    > export PYTHONPATH=.:./super-resolution-climate:$PYTHONPATH
 
 ## Configuration
 
-This project uses [hydra](https://hydra.cc) for workflow configuration.  All configuration files are found in the super-resolution-api/config directory.
+This project uses [hydra](https://hydra.cc) for workflow configuration.  All configuration files are found in the super-resolution-api/super-resolution-climate/config directory.
+
 Each workflow configuration is composed of several sections, each with a separate config file. For example, in the sample script [train-rcan-swot-2.2v.py](./scripts/train-rcan-swot-2.2v.py), 
 the *configuration* dict specifies the name of the config file to be used for each section, i.e. the *task* section is configured with the file [config/task/swot-2.2v.yaml](./config/task/SSS_SST-tiles-48.yaml). 
 The *ccustom* dict is used to override individual config values.  The *cname* parameter specifies the name of the root config file (e.g. [config/sres.yaml](./config/sres.yaml) )
