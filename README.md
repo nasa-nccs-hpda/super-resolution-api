@@ -38,7 +38,7 @@ Default values are specified here for a variety of internal parameters related t
 | Parameter | Description | Value |
 | --- | --- | --- |
 | `action` | process to run | infer, train |
-| `region` | region of interest | south_pacific, south_indian, 20-20e [*roi:  {  y0: 6500, ys: 3000 }*], 20-60n [roi:  {  y0: 9500, ys: 3000 }], 60-20s |
+| `region` | region of interest | south_pacific [*roi:  {  y0: 3500, ys: 3000, x0: 8797, xs: 7073 }*], south_pacific_1200 [*roi:  {  y0: 3500, ys: 3000, x0: 8797, xs: 7073 }*],south_indian [*roi:  {  y0: 3500, ys: 3000, x0: 2670, xs: 6037 }*], 20-20e [*roi:  {  y0: 6500, ys: 3000 }*], 20-60n [*roi:  {  y0: 9500, ys: 3000 }*], 60-20s |
 | `epochs` | maximum epochs during training | >0 |
 | `structure` | inference output format | image, tiles |
 
