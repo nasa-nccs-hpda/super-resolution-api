@@ -3,6 +3,10 @@
 
 Super Resolution Application Programming Interface (API) for Weather/Climate Data Framework.
 
+## Pre-Requisites
+
+Requires GPU support. 
+
 ## Environment
 
 If mamba is not available, install [miniforge](https://github.com/conda-forge/miniforge).
@@ -26,20 +30,32 @@ Execute the following to install and setup the super-resolution-api framework.
 
 ## Configuration
 
-This project uses [hydra](https://hydra.cc) for workflow configuration.  All configuration files are found in the super-resolution-api/super-resolution-climate/config directory.
-
-Each workflow configuration is composed of several sections, each with a separate config file. For example, in the sample script [train-rcan-swot-2.2v.py](./scripts/train-rcan-swot-2.2v.py), 
-the *configuration* dict specifies the name of the config file to be used for each section, i.e. the *task* section is configured with the file [config/task/swot-2.2v.yaml](./config/task/SSS_SST-tiles-48.yaml). 
-The *ccustom* dict is used to override individual config values.  The *cname* parameter specifies the name of the root config file (e.g. [config/sres.yaml](./config/sres.yaml) )
+This project uses [hydra](https://hydra.cc) for workflow configuration.  All configuration files are found in the super-resolution-api/super-resolution-climate/config directory.  
+Default values are specified here for a variety of internal parameters related to model tuning and inference derivations.  Pertinent runtime parameters are described in the table below.
 
 ## Parameters
 
-| Parameter | Description |
+| Parameter | Description | Value
 | --- | --- |
-| git status | List all new or modified files |
-| git diff | Show file differences that haven't been staged |
+| action | process to run | infer, train
+| region | region of interest | south_pacific, south_indian, 20-20e [roi:  {  y0: 6500, ys: 3000 }], 20-60n [roi:  {  y0: 9500, ys: 3000 }], 60-20s
+| epochs | maximum epochs during training | >0
+| structure | inference output format | image, tiles
 
-## Training
+Notes:
+image & tiles
+dataset_root: 
+
+## Example Runs
+
+### Inference
+
+    > python ./sresConfig/view/super-resolution-cli.py -action infer -region 20-60n -structure tiles -timesteps 3 
+    > python ./sresConfig/view/super-resolution-cli.py -action infer -region 20-60n -structure image
+
+### Training
+
+    > python ./sresConfig/view/super-resolution-cli.py -action train -region 20-60n -epochs 10 
 
 The scripts under *super-resolution-api/scripts/train* are used to train various super-resolution networks with various configurations. The notebook 
 [super-resolution-api/notebooks/plot_training.ipynb](./notebooks/plot_training.ipynb) is used to display a plot of 
@@ -49,3 +65,6 @@ loss vs. epochs for the configured training instance.
 
 The scripts under *super-resolution-api/scripts/inference* are used to run inference for the trained super-resolution networks. 
 
+## Pre-Requisites
+
+Requires GPU support. 

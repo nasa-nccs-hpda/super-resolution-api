@@ -6,7 +6,7 @@ Super Resolution Application Programming Interface (API) for Weather/Climate Dat
 # --------------------------------------------------------------------------------
 import sys
 
-
+# Overriding classes in super-resolution-climate project
 import veto.gpu
 import veto.workflow
 sys.modules["sres.base.gpu"] = veto.gpu
@@ -20,7 +20,7 @@ from sresConfig.controller.actions import ActionController
 
 def main():
     """
-    Main routine for SR-Lite
+    Main routine for Super Resolution Application Programming Interface (API).
     """
     ##############################################
     # Default configuration values
