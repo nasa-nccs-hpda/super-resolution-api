@@ -5,8 +5,8 @@ Super Resolution Application Programming Interface (API) for Weather/Climate Dat
 
 ## Pre-Requisites
 
-⋅⋅* Surface Water and Ocean Topography (SWOT) input data 
-⋅⋅* GPU support 
+1. Surface Water and Ocean Topography (SWOT) input data 
+2. GPU support 
 
 ## Environment
 
