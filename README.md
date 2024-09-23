@@ -5,7 +5,8 @@ Super Resolution Application Programming Interface (API) for Weather/Climate Dat
 
 ## Pre-Requisites
 
-Requires GPU support. 
+### 1) Surface Water and Ocean Topography (SWOT) input data 
+### 2) GPU support 
 
 ## Environment
 
@@ -32,7 +33,9 @@ Execute the following to install and setup the super-resolution-api framework.
 
 This project uses [hydra](https://hydra.cc) for workflow configuration.  All configuration files are found in the super-resolution-api/super-resolution-climate/config directory.  Default configuration values are specified here for a variety of internal parameters related to model tuning and inference derivations.  These initial values are reasonable for many scenarios.  However, the paths of the inputs and outputs *must* be correctly updated prior to execution in the `dataset_root:` and `root:` parameters respectively.
 
-This version of the API specifically supports the *SWOT* (Surface Water and Ocean Topography) dataset and the *SST* (sea surface temperature) variable.  User-specifiable runtime parameters are described in the table below.
+*This version of the API specifically supports the **SWOT** (Surface Water and Ocean Topography) dataset and the **SST** (sea surface temperature) variable.*  
+
+User-specifiable runtime parameters are described in the table below.
 
 ## Parameters
 
