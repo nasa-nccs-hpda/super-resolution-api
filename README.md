@@ -30,9 +30,9 @@ Execute the following to install and setup the super-resolution-api framework.
 
 ## Configuration
 
-This project uses [hydra](https://hydra.cc) for workflow configuration.  All configuration files are found in the super-resolution-api/super-resolution-climate/config directory.  Default configuration values are specified here for a variety of internal parameters related to model tuning and inference derivations.  While these defaults are reasonable for many scenarios, the paths of the inputs and outputs must be correctly updated in the `dataset_root:` and `root:` parameters respectively.
+This project uses [hydra](https://hydra.cc) for workflow configuration.  All configuration files are found in the super-resolution-api/super-resolution-climate/config directory.  Default configuration values are specified here for a variety of internal parameters related to model tuning and inference derivations.  These initial values are reasonable for many scenarios.  However, the paths of the inputs and outputs *must* be correctly updated prior to execution in the `dataset_root:` and `root:` parameters respectively.
 
-Pertinent runtime parameters are described in the table below.
+This version of the API specifically supports the *SWOT* (Surface Water and Ocean Topography) dataset and the *SST* (sea surface temperature) variable.  User-specifiable runtime parameters are described in the table below.
 
 ## Parameters
 
