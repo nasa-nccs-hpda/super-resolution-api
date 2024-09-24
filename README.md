@@ -28,6 +28,11 @@ Execute the following to install and setup the super-resolution-api framework.
     > git clone https://github.com/nasa-nccs-hpda/super-resolution-api.git
     > cd super-resolution-api/
     > export PYTHONPATH=.:./super-resolution-climate:$PYTHONPATH
+    > pwd
+
+Override default value of 'root:' parameter in ./super-resolution-api/super-resolution-climate/config/platform/platform-deploy.yaml with fully qualified path returned from 'pwd' command above.
+    > change: **root:      "<insert fully qualified path to super-resolution-api/test here>"** to something
+    > like:   **root:      "/<install path>/super-resolution-api/test"** (e.g., /home/gtamkin//super-resolution-api/test)
 
 ## Configuration
 
