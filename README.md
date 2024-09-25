@@ -31,7 +31,8 @@ Execute the following to install and setup the super-resolution-api framework.
     > cd test
     > pwd
     > mkdir results
-    > cd results 
+    > mkdir results/checkpoints
+    > cd results/checkpoints 
     > <install checkpoint file here from browser with URL=https://drive.google.com/file/d/1qyrui4DnCKiP0ENJRCUDhN8hKU_gOWJs/view?usp=drive_link>
     > cd ../..
     > export PYTHONPATH=.:./super-resolution-climate:$PYTHONPATH
