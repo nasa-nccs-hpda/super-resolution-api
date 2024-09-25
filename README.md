@@ -28,8 +28,8 @@ Execute the following to install and setup the super-resolution-api framework.
     > git clone https://github.com/nasa-nccs-hpda/super-resolution-api.git
     > cd super-resolution-api/
     > mkdir test
-    > pwd
     > cd test
+    > pwd
     > mkdir results
     > cd results 
     > **install checkpoint file here from https://drive.google.com/file/d/1qyrui4DnCKiP0ENJRCUDhN8hKU_gOWJs/view?usp=drive_link**
