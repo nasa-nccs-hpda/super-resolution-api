@@ -38,15 +38,14 @@ Execute the following to install and setup the super-resolution-api framework.
 
 Override default value of 'root:' parameter in `./super-resolution-api/super-resolution-climate/config/platform/platform-deploy.yaml` with fully qualified path returned from **pwd** command above.
 
-Override default value of 'root:' parameter in ./super-resolution-api/super-resolution-climate/config/platform/platform-deploy.yaml with fully qualified path returned from 'pwd' command above.
-    > change: **root:      "<insert fully qualified path to super-resolution-api/test here>"** to something
-    > like:   **root:      "/<install path>/super-resolution-api/test"** (e.g., /home/gtamkin//super-resolution-api/test)
+    > change: **root: "<insert fully qualified path to super-resolution-api/test here>"** to something
+    > like:   **root: "/<install path>/super-resolution-api/test"** (e.g., /home/gtamkin/super-resolution-api/test)
 
 ## Configuration
 
 This project uses [hydra](https://hydra.cc) for workflow configuration.  All configuration files are found in the super-resolution-api/super-resolution-climate/config directory.  Default configuration values are specified here for a variety of internal parameters related to model tuning and inference derivations.  These initial values are reasonable for many scenarios.  However, the paths of the inputs and outputs *must* be correctly updated prior to execution in the `dataset_root:` and `root:` parameters respectively.
 
-*This version of the API specifically supports the **SWOT** (Surface Water and Ocean Topography) dataset and the **SST** (sea surface temperature) variable.*  
+*This version of the API specifically supports the **SWOT** (Surface Water and Ocean Topography) dataset and the **SST** (sea surface temperature) variable.  The corresponding model (i.e., valid checkpoint=sres-rcan-10-20-64-swot_20-60n-SST-tiles-48.valid.pt) can be downloaded according to the Setup instructions above.*  
 
 User-specifiable runtime parameters are described in the table below.
 
