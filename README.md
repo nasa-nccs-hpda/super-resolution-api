@@ -34,7 +34,7 @@ Execute the following to install and setup the super-resolution-api framework.
     > mkdir results/checkpoints
     > cd results/checkpoints 
     > <install checkpoint file here from browser with URL=https://drive.google.com/file/d/1qyrui4DnCKiP0ENJRCUDhN8hKU_gOWJs/view?usp=drive_link>
-    > cd ../..
+    > cd ../../..
     > export PYTHONPATH=.:./super-resolution-climate:$PYTHONPATH
 
 Override default value of 'root:' parameter in `./super-resolution-api/super-resolution-climate/config/platform/platform-deploy.yaml` with fully qualified path returned from **pwd** command above.

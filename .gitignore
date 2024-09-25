@@ -166,3 +166,4 @@ super-res-api.qgz
 deploy/
 notebooks/
 .idea/
+test/results/checkpoints/sres-rcan-10-20-64-swot_20-60n-SST-tiles-48.valid.pt
